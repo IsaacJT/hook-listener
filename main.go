@@ -55,6 +55,12 @@ func pullRepo(delivery *HookDelivery) error {
   if err := exec.Command("git", "reset", "--hard", "origin/HEAD").Run(); err != nil {
     return err
   }
+  if exists(path.Join(repoPath, "config.toml")) {
+    /* Repo is a Hugo site, regenerate */
+    if err := exec.Command("hugo").Run(); err != nil {
+      return err
+    }
+  }
   log.Println("Successfully pulled '", delivery.Repository.Name, "'")
   return nil
 }
