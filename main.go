@@ -7,9 +7,6 @@ import (
   "crypto/hmac"
 )
 // checkMAC reports whether messageMAC is a valid HMAC tag for message.
-func checkMAC(message, messageMAC, key string) bool {
-  return checkMAC([]bytes(message), []byte(messageMAC), []byte(key))
-}
 func checkMAC(message, messageMAC, key []byte) bool {
 	mac := hmac.New(sha1.New, key)
 	mac.Write(message)
@@ -22,7 +19,9 @@ func handler(w http.ResponseWriter, r *http.Request) {
     w.WriteHeader(http.StatusMethodNotAllowed)
     return
   }
-  if (checkMAC(r.Body, strings.Split(r.Header.Get("X-Hub-Signature"), "=")[1], "test") {
+  if (checkMAC([]byte(r.Body),
+               []byte(strings.Split(r.Header.Get("X-Hub-Signature"), "=")[1]),
+               []byte("test"))) {
     w.WriteHeader(http.StatusOK)
   } else {
     w.WriteHeader(http.StatusUnauthorized)
