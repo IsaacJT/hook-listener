@@ -49,9 +49,8 @@ func pullRepo(delivery *HookDelivery) error {
   if err := os.Chdir(repoPath); err != nil {
     return err
   }
-  if cmd := exec.Command("git", "pull", "-f"); cmd == nil {
-    return errors.New("Error executing git pull for '" +  delivery.Repository.Name + "'")
-  }
+  exec.Command("git", "fetch", "-a")
+  exec.Command("git", "reset", "--hard", "origin/HEAD")
   log.Println("Successfully pulled '", delivery.Repository.Name, "'")
   return nil
 }
